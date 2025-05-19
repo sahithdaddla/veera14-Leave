@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leave History</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 20px;
+      color: #2c3e50;
+      line-height: 1.6;
+    }
+  
+    header {
+      background: linear-gradient(135deg, #3498db, #2c3e50);
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 12px;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin: 0 0 0.5rem 0;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+
+    header p {
+      font-size: 1.2rem;
+      margin: 0;
+      opacity: 0.9;
+      font-weight: 300;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* Card Styles - Updated to match your format */
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-top: 5px solid;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: #3498db;
+      font-size: 1.5rem;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 20px;
+    }
+
+    .info-row {
+      display: flex;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .label {
+      font-weight: 600;
+      color: #2c3e50;
+      width: 120px;
+      flex-shrink: 0;
+    }
+
+    .value {
+      color: #555;
+      word-break: break-word;
+      flex-grow: 1;
+    }
+
+    .status {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: capitalize;
+      display: inline-block;
+    }
+
+    .status.Approved {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status.Rejected {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+    .status.Pending {
+      background-color: #fff8e1;
+      color: #ff8f00;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+      padding-top: 15px;
+      border-top: 1px dashed #ddd;
+    }
+
+    .approve-btn, .reject-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .approve-btn {
+      background: linear-gradient(135deg, #4CAF50, #8BC34A);
+      color: white;
+    }
+
+    .approve-btn:hover {
+      background: linear-gradient(135deg, #3d8b40, #7cb342);
+      transform: translateY(-2px);
+    }
+
+    .reject-btn {
+      background: linear-gradient(135deg, #f44336, #e53935);
+      color: white;
+    }
+
+    .reject-btn:hover {
+      background: linear-gradient(135deg, #d32f2f, #c62828);
+      transform: translateY(-2px);
+    }
+
+    /* Different border colors based on leave type */
+    .card.Annual {
+      border-top-color: #3498db;
+    }
+    .card.Sick {
+      border-top-color: #9C27B0;
+    }
+    .card.Casual {
+      border-top-color: #FF9800;
+    }
+
+    /* Search and Filter Styles */
+    .search-filter-container {
+      max-width: 1200px;
+      margin: 0 auto 20px;
+      padding: 0 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+    }
+
+    .filter-dropdown {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      background-color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .no-results {
+      text-align: center;
+      grid-column: 1 / -1;
+      padding: 40px;
+      color: #777;
+      font-size: 18px;
+    }
+
+    @media (max-width: 768px) {
+      .card-container {
+        grid-template-columns: 1fr;
+        padding: 10px;
+      }
+      
+      .info-row {
+        flex-direction: column;
+      }
+      
+      .label {
+        width: 100%;
+        margin-bottom: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Leave Management</h1>
+    <p>"Empowering employees through flexible leave solutions"</p>
+  </header>
+
+  <div id="notification" style="display: none;"></div>
+
+  <div class="card-container" id="leaveHistoryContainer">
+    <!-- Cards will be populated dynamically -->
+  </div>
+
+  <script>
+    const container = document.getElementById("leaveHistoryContainer");
+    const notification = document.getElementById("notification");
+
+    // Function to show notification message
+    function showNotification(message, isSuccess) {
+      notification.textContent = message;
+     notification.style.display = "block";
+      notification.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336";
+      notification.style.color = "white";
+      notification.style.padding = "10px";
+      notification.style.margin = "10px 0";
+      notification.style.borderRadius = "4px";
+      
+     setTimeout(() => {
+        notification.style.display = "none";
+    }, 3000);
+    }
+
+    // Function to confirm action
+    function confirmAction(action, callback) {
+      if (confirm(`Are you sure you want to ${action} this leave request?`)) {
+        callback();
+      }
+    }
+
+    // Function to fetch all leave requests (manager view)
+    async function fetchLeaveRequests() {
+      try {
+        const response = await fetch('http://localhost:3000/api/leave-requests', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        if (!response.ok) throw new Error((await response.json()).message || 'Failed to fetch leave requests');
+        return await response.json();
+      } catch (error) {
+        console.error('Error fetching leave requests:', error);
+        showNotification(`Error: ${error.message}`, false);
+        return [];
+      }
+    }
+
+    // Function to update leave request status
+    async function updateLeaveStatus(id, status) {
+      try {
+        const response = await fetch(`http://localhost:3000/api/leave-requests/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to update leave status');
+        }
+        return await response.json();
+      } catch (error) {
+        console.error('Error updating leave status:', error);
+        throw error;
+      }
+    }
+
+    // Function to render leave requests
+    async function renderLeaveRequests() {
+      const leaveRequests = await fetchLeaveRequests();
+      container.innerHTML = "";
+
+      if (leaveRequests.length === 0) {
+        container.innerHTML = '<div class="no-results">No leave requests found.</div>';
+        return;
+      }
+
+      leaveRequests.forEach((request, index) => {
+        const card = document.createElement("div");
+        card.className = `card ${request.leaveType.replace(/\s+/g, '')}`;
+
+        const buttonsHtml = request.status === "Pending" 
+          ? `<div class="button-container">
+               <button class="approve-btn" data-id="${request.id}" data-index="${index}">Approved</button>
+               <button class="reject-btn" data-id="${request.id}" data-index="${index}">Rejected</button>
+             </div>`
+          : "";
+
+        card.innerHTML = `
+          <h3>${request.leaveType} Leave</h3>
+          <p><strong>Employee Id:</strong> ${request.Empid}</ Stuart</p>
+          <p><strong>Date Range:</strong> ${request.startDate} - ${request.endDate}</p>
+          <p><strong>Status:</strong> <span class="status ${request.status}">${request.status}</span></p>
+          <p><strong>Reason:</strong> ${request.reason}</p>
+          ${buttonsHtml}
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // Handle button clicks
+    container.addEventListener("click", async (e) => {
+      const button = e.target;
+      const id = button.dataset.id;
+      const index = button.dataset.index;
+
+      if (button.classList.contains("approve-btn")) {
+        confirmAction("approve", async () => {
+          try {
+            await updateLeaveStatus(id, "Approved");
+            const card = button.closest(".card");
+            const statusElement = card.querySelector(".status");
+            if (statusElement) {
+              statusElement.textContent = "Approved";
+              statusElement.className = "status Approved";
+            }
+            const buttonContainer = card.querySelector(".button-container");
+            if (buttonContainer) {
+              buttonContainer.remove();
+            }
+            showNotification("Leave request approved successfully!", true);
+          } catch (error) {
+            showNotification(error.message || "Failed to approve leave request.", false);
+          }
+        });
+      } else if (button.classList.contains("reject-btn")) {
+        confirmAction("reject", async () => {
+          try {
+            await updateLeaveStatus(id, "Rejected");
+            const card = button.closest(".card");
+            const statusElement = card.querySelector(".status");
+            if (statusElement) {
+              statusElement.textContent = "Rejected";
+              statusElement.className = "status Rejected";
+            }
+            const buttonContainer = card.querySelector(".button-container");
+            if (buttonContainer) {
+              buttonContainer.remove();
+            }
+            showNotification("Leave request rejected successfully!", true);
+          } catch (error) {
+            showNotification(error.message || "Failed to reject leave request.", false);
+          }
+        });
+      }
+    });
+
+    // Initialize the page
+    document.addEventListener("DOMContentLoaded", () => {
+      renderLeaveRequests();
+    });
+  </script>
+</body>
+</html>
