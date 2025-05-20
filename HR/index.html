@@ -42,7 +42,6 @@
       line-height: 1.5;
     }
 
-    /* Card Styles - Updated to match your format */
     .card-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -156,7 +155,6 @@
       transform: translateY(-2px);
     }
 
-    /* Different border colors based on leave type */
     .card.Annual {
       border-top-color: #3498db;
     }
@@ -167,7 +165,6 @@
       border-top-color: #FF9800;
     }
 
-    /* Search and Filter Styles */
     .search-filter-container {
       max-width: 1200px;
       margin: 0 auto 20px;
@@ -237,6 +234,22 @@
     <p>"Empowering employees through flexible leave solutions"</p>
   </header>
 
+  <div class="search-filter-container">
+    <input type="text" id="searchBox" class="search-box" placeholder="Search by Employee ID or Name">
+    <select id="statusFilter" class="filter-dropdown">
+      <option value="">All Statuses</option>
+      <option value="Pending">Pending</option>
+      <option value="Approved">Approved</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+    <select id="leaveTypeFilter" class="filter-dropdown">
+      <option value="">All Leave Types</option>
+      <option value="Annual Leave">Annual Leave</option>
+      <option value="Sick Leave">Sick Leave</option>
+      <option value="Casual Leave">Casual Leave</option>
+    </select>
+  </div>
+
   <div id="notification" style="display: none;"></div>
 
   <div class="card-container" id="leaveHistoryContainer">
@@ -246,30 +259,42 @@
   <script>
     const container = document.getElementById("leaveHistoryContainer");
     const notification = document.getElementById("notification");
+    const searchBox = document.getElementById("searchBox");
+    const statusFilter = document.getElementById("statusFilter");
+    const leaveTypeFilter = document.getElementById("leaveTypeFilter");
+    let allLeaveRequests = [];
 
-    // Function to show notification message
     function showNotification(message, isSuccess) {
       notification.textContent = message;
-     notification.style.display = "block";
+      notification.style.display = "block";
       notification.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336";
       notification.style.color = "white";
       notification.style.padding = "10px";
       notification.style.margin = "10px 0";
       notification.style.borderRadius = "4px";
       
-     setTimeout(() => {
+      setTimeout(() => {
         notification.style.display = "none";
-    }, 3000);
+      }, 3000);
     }
 
-    // Function to confirm action
     function confirmAction(action, callback) {
       if (confirm(`Are you sure you want to ${action} this leave request?`)) {
         callback();
       }
     }
 
-    // Function to fetch all leave requests (manager view)
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) {
+        return dateStr; // If not a valid date, return as-is (likely already YYYY-MM-DD)
+      }
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
     async function fetchLeaveRequests() {
       try {
         const response = await fetch('http://localhost:3000/api/leave-requests', {
@@ -285,11 +310,10 @@
       }
     }
 
-    // Function to update leave request status
     async function updateLeaveStatus(id, status) {
       try {
         const response = await fetch(`http://localhost:3000/api/leave-requests/${id}`, {
-          method: 'PATCH',
+          method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status })
         });
@@ -304,33 +328,56 @@
       }
     }
 
-    // Function to render leave requests
-    async function renderLeaveRequests() {
-      const leaveRequests = await fetchLeaveRequests();
+    function getLeaveTypeClass(leaveType) {
+      return leaveType.split(' ')[0]; // e.g., "Annual Leave" -> "Annual"
+    }
+
+    function renderLeaveRequests(requests) {
       container.innerHTML = "";
 
-      if (leaveRequests.length === 0) {
+      if (requests.length === 0) {
         container.innerHTML = '<div class="no-results">No leave requests found.</div>';
         return;
       }
 
-      leaveRequests.forEach((request, index) => {
+      requests.forEach((request, index) => {
+        const leaveTypeClass = getLeaveTypeClass(request.leave_type);
         const card = document.createElement("div");
-        card.className = `card ${request.leaveType.replace(/\s+/g, '')}`;
+        card.className = `card ${leaveTypeClass}`;
 
         const buttonsHtml = request.status === "Pending" 
           ? `<div class="button-container">
-               <button class="approve-btn" data-id="${request.id}" data-index="${index}">Approved</button>
-               <button class="reject-btn" data-id="${request.id}" data-index="${index}">Rejected</button>
+               <button class="approve-btn" data-id="${request.id}" data-index="${index}">Approve</button>
+               <button class="reject-btn" data-id="${request.id}" data-index="${index}">Reject</button>
              </div>`
           : "";
 
         card.innerHTML = `
-          <h3>${request.leaveType} Leave</h3>
-          <p><strong>Employee Id:</strong> ${request.Empid}</ Stuart</p>
-          <p><strong>Date Range:</strong> ${request.startDate} - ${request.endDate}</p>
-          <p><strong>Status:</strong> <span class="status ${request.status}">${request.status}</span></p>
-          <p><strong>Reason:</strong> ${request.reason}</p>
+          <h3>${request.leave_type}</h3>
+          <div class="info-row">
+            <span class="label">Employee ID:</span>
+            <span class="value">${request.emp_id}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Employee Name:</span>
+            <span class="value">${request.emp_name}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Date Range:</span>
+            <span class="value">${formatDate(request.start_date)} - ${formatDate(request.end_date)}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Submitted On:</span>
+            <span class="value">${formatDate(request.submitted_date)}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Status:</span>
+            <span class="value"><span class="status ${request.status}">${request.status}</span></span>
+          </div>
+          <div class="info-row">
+            <span class="label">Reason:</span>
+            <span class="value">${request.reason}</span>
+          </div>
           ${buttonsHtml}
         `;
 
@@ -338,7 +385,24 @@
       });
     }
 
-    // Handle button clicks
+    function filterLeaveRequests() {
+      const searchText = searchBox.value.toLowerCase().trim();
+      const selectedStatus = statusFilter.value;
+      const selectedLeaveType = leaveTypeFilter.value;
+
+      const filteredRequests = allLeaveRequests.filter(request => {
+        const matchesSearch = 
+          request.emp_id.toLowerCase().includes(searchText) ||
+          request.emp_name.toLowerCase().includes(searchText);
+        const matchesStatus = selectedStatus ? request.status === selectedStatus : true;
+        const matchesLeaveType = selectedLeaveType ? request.leave_type === selectedLeaveType : true;
+
+        return matchesSearch && matchesStatus && matchesLeaveType;
+      });
+
+      renderLeaveRequests(filteredRequests);
+    }
+
     container.addEventListener("click", async (e) => {
       const button = e.target;
       const id = button.dataset.id;
@@ -348,16 +412,8 @@
         confirmAction("approve", async () => {
           try {
             await updateLeaveStatus(id, "Approved");
-            const card = button.closest(".card");
-            const statusElement = card.querySelector(".status");
-            if (statusElement) {
-              statusElement.textContent = "Approved";
-              statusElement.className = "status Approved";
-            }
-            const buttonContainer = card.querySelector(".button-container");
-            if (buttonContainer) {
-              buttonContainer.remove();
-            }
+            allLeaveRequests[index].status = "Approved";
+            filterLeaveRequests();
             showNotification("Leave request approved successfully!", true);
           } catch (error) {
             showNotification(error.message || "Failed to approve leave request.", false);
@@ -367,16 +423,8 @@
         confirmAction("reject", async () => {
           try {
             await updateLeaveStatus(id, "Rejected");
-            const card = button.closest(".card");
-            const statusElement = card.querySelector(".status");
-            if (statusElement) {
-              statusElement.textContent = "Rejected";
-              statusElement.className = "status Rejected";
-            }
-            const buttonContainer = card.querySelector(".button-container");
-            if (buttonContainer) {
-              buttonContainer.remove();
-            }
+            allLeaveRequests[index].status = "Rejected";
+            filterLeaveRequests();
             showNotification("Leave request rejected successfully!", true);
           } catch (error) {
             showNotification(error.message || "Failed to reject leave request.", false);
@@ -385,9 +433,13 @@
       }
     });
 
-    // Initialize the page
-    document.addEventListener("DOMContentLoaded", () => {
-      renderLeaveRequests();
+    searchBox.addEventListener("input", filterLeaveRequests);
+    statusFilter.addEventListener("change", filterLeaveRequests);
+    leaveTypeFilter.addEventListener("change", filterLeaveRequests);
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      allLeaveRequests = await fetchLeaveRequests();
+      renderLeaveRequests(allLeaveRequests);
     });
   </script>
 </body>

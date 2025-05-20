@@ -1,12 +1,9 @@
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+
 const app = express();
 const port = 3000;
-
-// Middleware
-app.use(cors());
-app.use(express.json());
 
 // PostgreSQL connection
 const pool = new Pool({
@@ -17,269 +14,212 @@ const pool = new Pool({
   port: 5432,
 });
 
-// Test database connection
-async function testDbConnection() {
-  try {
-    const client = await pool.connect();
-    console.log('Successfully connected to PostgreSQL');
-    client.release();
-  } catch (err) {
-    console.error('Failed to connect to PostgreSQL:', err.message);
-    process.exit(1);
-  }
-}
+app.use(cors());
+app.use(express.json());
 
 // Initialize database tables
-async function initDb() {
+async function initializeDatabase() {
   try {
-    // Drop tables for testing (comment out in production)
-    await pool.query('DROP TABLE IF EXISTS leave_requests CASCADE;');
-    await pool.query('DROP TABLE IF EXISTS leave_balances CASCADE;');
-    console.log('Dropped existing tables');
-
-    // Create leave_balances table with emp_id as primary key
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS leave_balances (
+
+      CREATE TABLE leave_balances (
         emp_id VARCHAR(7) PRIMARY KEY,
-        annual INTEGER NOT NULL DEFAULT 10,
-        sick INTEGER NOT NULL DEFAULT 5,
-        casual INTEGER NOT NULL DEFAULT 8
+        emp_name VARCHAR(50) NOT NULL,
+        annual INTEGER DEFAULT 10,
+        sick INTEGER DEFAULT 5,
+        casual INTEGER DEFAULT 8
       );
-    `);
-    console.log('leave_balances table created');
 
-    // Create leave_requests table with foreign key to leave_balances
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS leave_requests (
+      CREATE TABLE leave_requests (
         id SERIAL PRIMARY KEY,
         emp_id VARCHAR(7) REFERENCES leave_balances(emp_id),
-        leave_type VARCHAR(20) NOT NULL,
+        leave_type VARCHAR(50) NOT NULL,
         start_date DATE NOT NULL,
         end_date DATE NOT NULL,
         reason TEXT NOT NULL,
-        status VARCHAR(20) NOT NULL DEFAULT 'Pending',
+        status VARCHAR(20) DEFAULT 'Pending',
         submitted_date DATE NOT NULL
       );
     `);
-    console.log('leave_requests table created');
-  } catch (err) {
-    console.error('Error initializing database:', err.message);
-    throw err;
+    console.log('Database initialized successfully');
+  } catch (error) {
+    console.error('Error initializing database:', error);
   }
 }
 
-// Initialize database and start server
-async function startServer() {
-  await testDbConnection();
-  await initDb();
+// Get leave balance
+app.get('/api/leave-balances/:empId', async (req, res) => {
+  const empId = req.params.empId;
+  if (!/^[A-Z0-9]{1,7}$/.test(empId)) {
+    return res.status(400).json({ message: 'Invalid Emp-ID format' });
+  }
 
-  // API Endpoints
-
-  // Get or create leave balances
-  app.get('/api/leave-balances/:empId', async (req, res) => {
-    const { empId } = req.params;
-    try {
-      // Validate emp_id format
-      if (!/^[A-Z0-9]{1,7}$/.test(empId)) {
-        return res.status(400).json({ message: 'Invalid emp_id format' });
-      }
-
-      // Check if emp_id exists
-      let result = await pool.query('SELECT annual, sick, casual FROM leave_balances WHERE emp_id = $1', [empId]);
-      if (result.rows.length === 0) {
-        // Create default balances
-        await pool.query(`
-          INSERT INTO leave_balances (emp_id, annual, sick, casual)
-          VALUES ($1, 10, 5, 8)
-          ON CONFLICT (emp_id) DO NOTHING
-          RETURNING annual, sick, casual
-        `, [empId]);
-        result = await pool.query('SELECT annual, sick, casual FROM leave_balances WHERE emp_id = $1', [empId]);
-      }
-      res.json(result.rows[0]);
-    } catch (err) {
-      console.error('Error fetching/creating leave balances:', err.message);
-      res.status(500).json({ message: 'Server error' });
+  try {
+    let result = await pool.query('SELECT * FROM leave_balances WHERE emp_id = $1', [empId]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'NO Data' });
     }
-  });
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching leave balance:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
-  // Get leave requests (for history and details)
-  app.get('/api/leave-requests/:empId', async (req, res) => {
-    const { empId } = req.params;
-    try {
-      const result = await pool.query(`
-        SELECT id, emp_id, leave_type, start_date, end_date, reason, status, submitted_date
-        FROM leave_requests
-        WHERE emp_id = $1
-        ORDER BY submitted_date DESC
-      `, [empId]);
-      res.json(result.rows.map(row => ({
-        id: row.id,
-        Empid: row.emp_id,
-        leaveType: row.leave_type,
-        startDate: row.start_date.toISOString().split('T')[0],
-        endDate: row.end_date.toISOString().split('T')[0],
-        reason: row.reason,
-        status: row.status,
-        submittedDate: row.submitted_date.toISOString().split('T')[0]
-      })));
-    } catch (err) {
-      console.error('Error fetching leave requests:', err.message);
-      res.status(500).json({ message: 'Server error' });
+// Get leave requests
+app.get('/api/leave-requests/:empId', async (req, res) => {
+  const empId = req.params.empId;
+  if (!/^[A-Z0-9]{1,7}$/.test(empId)) {
+    return res.status(400).json({ message: 'Invalid Emp-ID format' });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT id, emp_id, leave_type, start_date, end_date, reason, status, submitted_date ' +
+      'FROM leave_requests WHERE emp_id = $1 ORDER BY submitted_date DESC',
+      [empId]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching leave requests:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Submit leave request
+app.post('/api/leave-requests', async (req, res) => {
+  const { Empid, emp_name, leaveType, startDate, endDate, reason, submittedDate } = req.body;
+
+  if (!/^[A-Z0-9]{1,7}$/.test(Empid)) {
+    return res.status(400).json({ message: 'Invalid Emp-ID format' });
+  }
+
+  if (!emp_name || !/^[a-zA-Z\s.,-]{1,50}$/.test(emp_name)) {
+    return res.status(400).json({ message: 'Invalid employee name' });
+  }
+
+  if (!['Annual Leave', 'Sick Leave', 'Casual Leave'].includes(leaveType)) {
+    return res.status(400).json({ message: 'Invalid leave type' });
+  }
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (start < today) {
+    return res.status(400).json({ message: 'Start date cannot be in the past' });
+  }
+
+  if (end < start) {
+    return res.status(400).json({ message: 'End date cannot be before start date' });
+  }
+
+  const sixMonthsFromNow = new Date();
+  sixMonthsFromNow.setMonth(today.getMonth() + 6);
+  if (start > sixMonthsFromNow || end > sixMonthsFromNow) {
+    return res.status(400).json({ message: 'Leave dates cannot be more than 6 months in the future' });
+  }
+
+  try {
+    // Check if employee exists in leave_balances
+    let balanceResult = await pool.query('SELECT * FROM leave_balances WHERE emp_id = $1', [Empid]);
+    let balance = balanceResult.rows[0];
+
+    if (!balance) {
+      // New employee: Insert into leave_balances with emp_name
+      await pool.query(
+        'INSERT INTO leave_balances (emp_id, emp_name, annual, sick, casual) VALUES ($1, $2, $3, $4, $5)',
+        [Empid, emp_name, 10, 5, 8]
+      );
+      balance = { emp_id: Empid, emp_name: emp_name, annual: 10, sick: 5, casual: 8 };
+    } else {
+      // Existing employee: Check if emp_name matches
+      if (balance.emp_name.toLowerCase() !== emp_name.toLowerCase()) {
+        return res.status(400).json({ message: 'Employee name does not match the recorded name for this Emp-ID' });
+      }
     }
-  });
 
-  // Get all leave requests (for manager view in Leave History)
-  app.get('/api/leave-requests', async (req, res) => {
-    try {
-      const result = await pool.query(`
-        SELECT id, emp_id, leave_type, start_date, end_date, reason, status, submitted_date
-        FROM leave_requests
-        ORDER BY submitted_date DESC
-      `);
-      res.json(result.rows.map(row => ({
-        id: row.id,
-        Empid: row.emp_id,
-        leaveType: row.leave_type,
-        startDate: row.start_date.toISOString().split('T')[0],
-        endDate: row.end_date.toISOString().split('T')[0],
-        reason: row.reason,
-        status: row.status,
-        submittedDate: row.submitted_date.toISOString().split('T')[0]
-      })));
-    } catch (err) {
-      console.error('Error fetching all leave requests:', err.message);
-      res.status(500).json({ message: 'Server error' });
+    const leaveTypeKey = leaveType.split(' ')[0].toLowerCase();
+    const daysRequested = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+    if (balance[leaveTypeKey] < daysRequested) {
+      return res.status(400).json({ message: `Insufficient ${leaveTypeKey} leave balance` });
     }
-  });
 
-  // Submit a new leave request
-  app.post('/api/leave-requests', async (req, res) => {
-    const { Empid, leaveType, startDate, endDate, reason, submittedDate } = req.body;
-    try {
-      // Validate emp_id format
-      if (!/^[A-Z0-9]{1,7}$/.test(Empid)) {
-        return res.status(400).json({ message: 'Invalid emp_id format' });
-      }
+    // Insert leave request (without emp_name)
+    await pool.query(
+      'INSERT INTO leave_requests (emp_id, leave_type, start_date, end_date, reason, status, submitted_date) ' +
+      'VALUES ($1, $2, $3, $4, $5, $6, $7)',
+      [Empid, leaveType, startDate, endDate, reason, 'Pending', submittedDate]
+    );
 
-      // Ensure emp_id exists in leave_balances
-      let balanceResult = await pool.query('SELECT annual, sick, casual FROM leave_balances WHERE emp_id = $1', [Empid]);
-      if (balanceResult.rows.length === 0) {
-        await pool.query(`
-          INSERT INTO leave_balances (emp_id, annual, sick, casual)
-          VALUES ($1, 10, 5, 8)
-          ON CONFLICT (emp_id) DO NOTHING
-        `, [Empid]);
-        balanceResult = await pool.query('SELECT annual, sick, casual FROM leave_balances WHERE emp_id = $1', [Empid]);
-      }
+    // Update leave balance
+    await pool.query(
+      `UPDATE leave_balances SET ${leaveTypeKey} = ${leaveTypeKey} - $1 WHERE emp_id = $2`,
+      [daysRequested, Empid]
+    );
 
-      // Validate dates
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const sixMonthsFromNow = new Date();
-      sixMonthsFromNow.setMonth(today.getMonth() + 6);
+    res.status(201).json({ message: 'Leave request submitted successfully' });
+  } catch (error) {
+    console.error('Error submitting leave request:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
-      if (start < today) {
-        return res.status(400).json({ message: 'Start date cannot be in the past' });
-      }
-      if (start > sixMonthsFromNow || end > sixMonthsFromNow) {
-        return res.status(400).json({ message: 'Leave dates cannot be more than 6 months in the future' });
-      }
-      if (end < start) {
-        return res.status(400).json({ message: 'End date cannot be earlier than start date' });
-      }
+// Get all leave requests (for leave_history.html)
+app.get('/api/leave-requests', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT lr.id, lr.emp_id, lb.emp_name, lr.leave_type, lr.start_date, lr.end_date, lr.reason, lr.status, lr.submitted_date ' +
+      'FROM leave_requests lr ' +
+      'JOIN leave_balances lb ON lr.emp_id = lb.emp_id ' +
+      'ORDER BY lr.submitted_date DESC'
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching all leave requests:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
-      // Check for overlapping requests
-      const overlapResult = await pool.query(`
-        SELECT id FROM leave_requests
-        WHERE emp_id = $1
-        AND (
-          ($2 BETWEEN start_date AND end_date)
-          OR ($3 BETWEEN start_date AND end_date)
-          OR (start_date BETWEEN $2 AND $3)
-        )
-      `, [Empid, startDate, endDate]);
-      if (overlapResult.rows.length > 0) {
-        return res.status(400).json({ message: 'Overlapping leave request exists' });
-      }
+// Update leave request status
+app.put('/api/leave-requests/:id', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
 
-      // Check leave balance
-      const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-      const balances = balanceResult.rows[0];
-      let balanceField;
-      switch (leaveType) {
-        case 'Annual Leave': balanceField = 'annual'; break;
-        case 'Sick Leave': balanceField = 'sick'; break;
-        case 'Casual Leave': balanceField = 'casual'; break;
-        default: return res.status(400).json({ message: 'Invalid leave type' });
-      }
-      if (balances[balanceField] < days) {
-        return res.status(400).json({ message: `Insufficient ${leaveType} balance` });
-      }
+  if (!['Approved', 'Rejected'].includes(status)) {
+    return res.status(400).json({ message: 'Invalid status' });
+  }
 
-      // Update balance
-      await pool.query(`
-        UPDATE leave_balances
-        SET ${balanceField} = ${balanceField} - $1
-        WHERE emp_id = $2
-      `, [days, Empid]);
+  try {
+    const result = await pool.query(
+      'UPDATE leave_requests SET status = $1 WHERE id = $2 RETURNING *',
+      [status, id]
+    );
 
-      // Insert leave request
-      const result = await pool.query(`
-        INSERT INTO leave_requests (emp_id, leave_type, start_date, end_date, reason, status, submitted_date)
-        VALUES ($1, $2, $3, $4, $5, 'Pending', $6)
-        RETURNING id
-      `, [Empid, leaveType, startDate, endDate, reason, submittedDate]);
-
-      res.status(201).json({ id: result.rows[0].id });
-    } catch (err) {
-      console.error('Error submitting leave request:', err.message);
-      res.status(500).json({ message: 'Server error' });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Leave request not found' });
     }
-  });
 
-  // Update leave request status
-  app.patch('/api/leave-requests/:id', async (req, res) => {
-    const { id } = req.params;
-    const { status } = req.body;
-    try {
-      if (!['Approved', 'Rejected'].includes(status)) {
-        return res.status(400).json({ message: 'Invalid status' });
-      }
-      const result = await pool.query(`
-        UPDATE leave_requests
-        SET status = $1
-        WHERE id = $2
-        RETURNING *
-      `, [status, id]);
-      if (result.rows.length === 0) {
-        return res.status(404).json({ message: 'Leave request not found' });
-      }
-      const row = result.rows[0];
-      res.json({
-        id: row.id,
-        Empid: row.emp_id,
-        leaveType: row.leave_type,
-        startDate: row.start_date.toISOString().split('T')[0],
-        endDate: row.end_date.toISOString().split('T')[0],
-        reason: row.reason,
-        status: row.status,
-        submittedDate: row.submitted_date.toISOString().split('T')[0]
-      });
-    } catch (err) {
-      console.error('Error updating leave status:', err.message);
-      res.status(500).json({ message: 'Server error' });
+    const request = result.rows[0];
+    if (status === 'Rejected') {
+      const leaveTypeKey = request.leave_type.split(' ')[0].toLowerCase();
+      const days = Math.ceil((new Date(request.end_date) - new Date(request.start_date)) / (1000 * 60 * 60 * 24)) + 1;
+      await pool.query(
+        `UPDATE leave_balances SET ${leaveTypeKey} = ${leaveTypeKey} + $1 WHERE emp_id = $2`,
+        [days, request.emp_id]
+      );
     }
-  });
 
-  app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-  });
-}
+    res.json({ message: 'Leave request updated successfully' });
+  } catch (error) {
+    console.error('Error updating leave request:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
-startServer().catch(err => {
-  console.error('Failed to start server:', err.message);
-  process.exit(1);
+app.listen(port, async () => {
+  await initializeDatabase();
+  console.log(`Server running at http://localhost:${port}`);
 });
