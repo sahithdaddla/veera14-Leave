@@ -879,7 +879,7 @@
 
   <section class="main-container container">
     <section class="leave-request card">
-      <!-- <button class="close-btn">✕</button> -->
+      <button class="close-btn">✕</button>
       <h2>Request Leave</h2>
       <form id="leaveRequestForm">
         <div class="form-group">
@@ -1062,22 +1062,34 @@
       return date <= sixMonthsFromNow;
     }
 
-    async function fetchLeaveBalances(empId) {
-      try {
-        const response = await fetch(`http://localhost:3000/api/leave-balances/${empId}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to fetch leave balances');
-        }
-        return await response.json();
-      } catch (error) {
-        console.error('Error fetching leave balances:', error.message);
-        throw error;
-      }
+async function fetchLeaveBalances(empId) {
+  try {
+    const response = await fetch(`http://localhost:3000/api/leave-balances/${empId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to fetch leave balances');
     }
+    const data = await response.json();
+    // Use form's empName if backend returns empty emp_name
+    return {
+      emp_name: data.emp_name || document.getElementById("empName").value.trim(),
+      annual: data.annual,
+      sick: data.sick,
+      casual: data.casual
+    };
+  } catch (error) {
+    console.error('Error fetching leave balances:', error.message);
+    return {
+      emp_name: document.getElementById("empName").value.trim(),
+      annual: 10,
+      sick: 5,
+      casual: 8
+    };
+  }
+}
 
     async function fetchLeaveHistory(empId) {
       try {
@@ -1096,23 +1108,23 @@
       }
     }
 
-    async function submitLeaveRequest(request) {
-      try {
-        const response = await fetch('http://localhost:3000/api/leave-requests', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(request)
-        });
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to submit leave request');
-        }
-        return await response.json();
-      } catch (error) {
-        console.error('Error submitting leave request:', error);
-        throw error;
-      }
+async function submitLeaveRequest(request) {
+  try {
+    const response = await fetch('http://localhost:3000/api/leave-requests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request)
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to submit leave request');
     }
+    return await response.json();
+  } catch (error) {
+    console.error('Error submitting leave request:', error);
+    throw error;
+  }
+}
 
     // Format date for display (e.g., "June 10, 2025")
     function formatDateDisplay(dateStr) {
@@ -1163,45 +1175,44 @@
       });
     }
 
-    async function loadEmployeeData(empId) {
-      const employeeDataSection = document.getElementById("employeeDataSection");
-      const employeeName = document.getElementById("employeeName");
-      const annualLeaveBalance = document.getElementById("annualLeaveBalance");
-      const sickLeaveBalance = document.getElementById("sickLeaveBalance");
-      const casualLeaveBalance = document.getElementById("casualLeaveBalance");
-      const leaveHistoryCards = document.getElementById("leaveHistoryCards");
-      const errorMessageElement = document.getElementById("error-message");
-      const mainContainer = document.querySelector('.main-container');
+async function loadEmployeeData(empId) {
+  const employeeDataSection = document.getElementById("employeeDataSection");
+  const employeeName = document.getElementById("employeeName");
+  const annualLeaveBalance = document.getElementById("annualLeaveBalance");
+  const sickLeaveBalance = document.getElementById("sickLeaveBalance");
+  const casualLeaveBalance = document.getElementById("casualLeaveBalance");
+  const leaveHistoryCards = document.getElementById("leaveHistoryCards");
+  const errorMessageElement = document.getElementById("error-message");
+  const mainContainer = document.querySelector('.main-container');
 
-      fetchLeaveBalances(empId).then(balances => {
-        employeeName.textContent = balances.emp_name || 'N/A';
-        annualLeaveBalance.textContent = balances.annual;
-        sickLeaveBalance.textContent = balances.sick;
-        casualLeaveBalance.textContent = balances.casual;
-        
-        // Show employee data section and adjust layout
-        employeeDataSection.style.display = "block";
-        mainContainer.classList.add('has-employee-data');
-        
-        if (errorMessageElement) {
-          errorMessageElement.style.display = "none";
-        }
-      }).catch(error => {
-        console.error('Error fetching balances:', error.message);
-        if (error.message === 'Employee not found') {
-          if (errorMessageElement) {
-            errorMessageElement.textContent = "Employee not found. Please submit a leave request to register.";
-            errorMessageElement.style.display = "block";
-          }
-        } else {
-          if (errorMessageElement) {
-            errorMessageElement.textContent = error.message || "Failed to fetch leave balances.";
-            errorMessageElement.style.display = "block";
-          }
-        }
-        employeeDataSection.style.display = "none";
-        mainContainer.classList.remove('has-employee-data');
-      });
+  fetchLeaveBalances(empId).then(balances => {
+    employeeName.textContent = balances.emp_name || 'N/A';
+    annualLeaveBalance.textContent = balances.annual;
+    sickLeaveBalance.textContent = balances.sick;
+    casualLeaveBalance.textContent = balances.casual;
+    
+    // Show employee data section and adjust layout
+    employeeDataSection.style.display = "block";
+    mainContainer.classList.add('has-employee-data');
+    
+    if (errorMessageElement) {
+      errorMessageElement.style.display = "none";
+    }
+  }).catch(error => {
+    if (error.message === 'Employee not found') {
+      if (errorMessageElement) {
+        errorMessageElement.textContent = "Employee not found. Please submit a leave request to register.";
+        errorMessageElement.style.display = "block";
+      }
+    } else {
+      if (errorMessageElement) {
+        errorMessageElement.textContent = error.message || "Failed to fetch leave balances.";
+        errorMessageElement.style.display = "block";
+      }
+    }
+    employeeDataSection.style.display = "none";
+    mainContainer.classList.remove('has-employee-data');
+  });
 
       fetchLeaveHistory(empId).then(leaveRequests => {
         leaveHistoryCards.innerHTML = "";
@@ -1237,12 +1248,21 @@
           leaveHistoryCards.appendChild(noHistory);
         });
       }).catch(error => {
-        console.error('Error fetching history:', error);
-        if (errorMessageElement) {
-          errorMessageElement.textContent = error.message || "Failed to fetch leave history.";
-          errorMessageElement.style.display = "block";
-        }
-      });
+  console.error('Error fetching balances:', error.message);
+  if (error.message === 'Employee not found') {
+    if (errorMessageElement) {
+      errorMessageElement.textContent = "Employee not found. Please submit a leave request to register.";
+      errorMessageElement.style.display = "block";
+    }
+  } else {
+    if (errorMessageElement) {
+      errorMessageElement.textContent = error.message || "Failed to fetch leave balances.";
+      errorMessageElement.style.display = "block";
+    }
+  }
+  employeeDataSection.style.display = "none";
+  mainContainer.classList.remove('has-employee-data');
+});
     }
 
     document.addEventListener("DOMContentLoaded", function () {
