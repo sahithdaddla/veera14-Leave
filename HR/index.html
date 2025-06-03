@@ -58,6 +58,34 @@
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       border-top: 5px solid;
+      display: flex;
+      flex-direction: column;
+      height: 400px; /* Fixed height for all cards */
+    }
+
+    .card-content {
+      overflow-y: auto; /* Add scroll when content overflows */
+      flex-grow: 1;
+      padding-right: 5px; /* Prevent content from touching scrollbar */
+    }
+
+    /* Custom scrollbar for card content */
+    .card-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .card-content::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    .card-content::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+
+    .card-content::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
     }
 
     .card:hover {
@@ -352,7 +380,9 @@
              </div>`
           : "";
 
-        card.innerHTML = `
+        const cardContent = document.createElement("div");
+        cardContent.className = "card-content";
+        cardContent.innerHTML = `
           <h3>${request.leave_type}</h3>
           <div class="info-row">
             <span class="label">Employee ID:</span>
@@ -378,9 +408,10 @@
             <span class="label">Reason:</span>
             <span class="value">${request.reason}</span>
           </div>
-          ${buttonsHtml}
         `;
 
+        card.appendChild(cardContent);
+        card.innerHTML += buttonsHtml;
         container.appendChild(card);
       });
     }
