@@ -1134,7 +1134,7 @@
     // API functions
     async function fetchLeaveBalances(empId) {
       try {
-        const response = await fetch(`http://13.60.18.233:3059/api/leave-balances/${empId}`, {
+        const response = await fetch(`http://13.61.174.97:3059/api/leave-balances/${empId}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         });
@@ -1162,7 +1162,7 @@
 
     async function fetchLeaveHistory(empId) {
       try {
-        const response = await fetch(`http://13.60.18.233:3059/api/leave-requests/${empId}`, {
+        const response = await fetch(`http://13.61.174.97:3059/api/leave-requests/${empId}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         });
@@ -1179,7 +1179,7 @@
 
     async function submitLeaveRequest(request) {
       try {
-        const response = await fetch('http://13.60.18.233:3059/api/leave-requests', {
+        const response = await fetch('http://13.61.174.97:3059/api/leave-requests', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(request)
