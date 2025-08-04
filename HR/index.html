@@ -325,7 +325,7 @@
 
     async function fetchLeaveRequests() {
       try {
-        const response = await fetch('http://13.61.174.97:3059/api/leave-requests', {
+        const response = await fetch('http://51.20.8.44:3059/api/leave-requests', {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         });
@@ -340,7 +340,7 @@
 
     async function updateLeaveStatus(id, status) {
       try {
-        const response = await fetch(`http://13.61.174.97:3059/api/leave-requests/${id}`, {
+        const response = await fetch(`http://51.20.8.44:3059/api/leave-requests/${id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status })
