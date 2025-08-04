@@ -31,7 +31,6 @@
   body {
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
     line-height: 1.6;
-    /* color: var(--dark); */
     min-height: 100vh;
   }
 
@@ -46,14 +45,12 @@
     font-weight: 600;
   }
 
-  /* Banner Styles */
   .banner {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: white;
     text-align: center;
     padding: 3rem 1.5rem;
     border-radius: var(--border-radius);
-    /* margin-bottom: 2rem; */
     box-shadow: var(--box-shadow);
     position: relative;
     overflow: hidden;
@@ -81,7 +78,7 @@
     text-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
 
-  .banner .quote {
+  .banner .notification {
     font-size: 1.125rem;
     opacity: 0.9;
     position: relative;
@@ -89,7 +86,6 @@
     font-weight: 300;
   }
 
-  /* Main Container for Split Layout */
   .main-container {
     display: flex;
     gap: 2rem;
@@ -98,11 +94,9 @@
     position: relative;
   }
 
-  /* Glassmorphism Card Style */
   .card {
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     border: 1px solid rgba(255, 255, 255, 0.18);
@@ -114,20 +108,18 @@
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
   }
 
-  /* Leave Request Form */
   .leave-request {
     padding: 2.5rem;
     width: 100%;
     max-width: 700px;
     animation: fadeIn 0.5s ease-out;
     position: relative;
-    margin: 0 auto; /* Center the form initially */
+    margin: 0 auto;
     transition: var(--transition);
   }
 
-  /* When employee data is shown, move form to the left */
   .main-container.has-employee-data .leave-request {
-    margin: 0; /* Remove auto margin */
+    margin: 0;
     flex: 1;
   }
 
@@ -147,50 +139,6 @@
     background: linear-gradient(to right, var(--primary), var(--accent));
     margin: 0.5rem auto 0;
     border-radius: 2px;
-  }
-
-  .close-btn {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    font-size: 1.5rem;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(5px);
-    border: none;
-    cursor: pointer;
-    color: var(--gray);
-    transition: var(--transition);
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .close-btn::before {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    background: rgba(239, 35, 60, 0.2);
-    border-radius: 50%;
-    transition: width 0.4s ease, height 0.4s ease;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  .close-btn:hover::before {
-    width: 200%;
-    height: 200%;
-  }
-
-  .close-btn:hover {
-    color: var(--danger);
-    background: rgba(255, 255, 255, 0.9);
   }
 
   .form-group {
@@ -236,7 +184,7 @@
     color: var(--danger);
     font-size: 0.85rem;
     margin-top: 0.5rem;
-    display: block;
+    display: none;
   }
 
   #reasonCounter {
@@ -343,8 +291,8 @@
 
   .calendar-btn {
     background: linear-gradient(135deg, var(--secondary), var(--primary-light));
-    color: white;
     padding: 1rem 2.5rem;
+    color: white;
   }
 
   .calendar-btn:hover {
@@ -363,7 +311,7 @@
     box-shadow: 0 8px 20px rgba(239, 35, 60, 0.3);
   }
 
-  #prevMonth, #nextMonth {
+  #prevMonthBtn, #nextMonthBtn {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -375,7 +323,7 @@
     transition: var(--transition);
   }
 
-  #prevMonth:hover, #nextMonth:hover {
+  #prevMonthBtn:hover, #nextMonthBtn:hover {
     background: rgba(255, 255, 255, 0.9);
     color: var(--secondary);
     transform: translateY(-2px);
@@ -393,7 +341,6 @@
     display: none;
   }
 
-  /* Employee Data Section */
   .employee-data {
     padding: 2.5rem;
     flex: 1;
@@ -478,10 +425,9 @@
     justify-content: center;
     gap: 1rem;
     flex-wrap: wrap;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
   }
 
-  /* Leave History Styles */
   .leave-history {
     margin-top: 2.5rem;
   }
@@ -517,6 +463,9 @@
     font-size: 0.9rem;
     margin: 0.75rem 0;
     color: var(--dark);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
   }
 
   .history-card p strong {
@@ -537,7 +486,6 @@
     border-radius: 8px;
   }
 
-  /* Calendar Section */
   .calendar-container {
     display: none;
     flex-direction: column;
@@ -613,6 +561,15 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+
+  .leave-info {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
   }
 
   .calendar-grid .day:hover {
@@ -640,7 +597,7 @@
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-    z-index: 10;
+    z-index: 1000;
     width: 250px;
     left: 100%;
     top: 0;
@@ -656,7 +613,7 @@
   .today {
     background: var(--primary) !important;
     color: white !important;
-    font-weight: 700;
+    font-weight: 700 !important;
     border: none !important;
   }
 
@@ -729,7 +686,6 @@
     font-weight: 500;
   }
 
-  /* Status Badges */
   .status-badge {
     display: inline-block;
     padding: 0.35rem 0.75rem;
@@ -755,7 +711,6 @@
     color: var(--danger);
   }
 
-  /* Animations */
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -767,7 +722,6 @@
     100% { transform: scale(1); }
   }
 
-  /* Responsive Design */
   @media (min-width: 1024px) {
     .main-container {
       flex-wrap: nowrap;
@@ -795,7 +749,7 @@
       font-size: 2rem;
     }
 
-    .banner .quote {
+    .banner .notification {
       font-size: 1rem;
     }
 
@@ -874,81 +828,84 @@
 <body>
   <section class="banner container">
     <h1>Employee Leave Management</h1>
-    <p class="quote">Plan your time-off with ease and balance.</p>
+    <p class="notification">Please enter your details below to submit a leave request.</p>
   </section>
 
-  <section class="main-container container">
+  <div class="main-container container">
     <section class="leave-request card">
-      <!-- <button class="close-btn">✕</button> -->
       <h2>Request Leave</h2>
       <form id="leaveRequestForm">
         <div class="form-group">
-          <label for="Empid">Employee ID</label>
+          <label for="Empid">Employee ID:</label>
           <input 
             type="text" 
             id="Empid" 
             name="Empid" 
             required 
             maxlength="7"
+            placeholder="ATS0XXX"
             pattern="^ATS0(?!000)\d{3}$"
-            title="Emp-ID must be 1-7 alphanumeric characters"
+            title="Emp-ID must be ATS0 followed by 3 digits (001-999)"
           >
-          <small class="error-message"></small>
+          <small class="error-message" id="empIdError"></small>
         </div>
         <div class="form-group">
-          <label for="empName">Employee Name</label>
+          <label for="empName">Employee Name:</label>
           <input 
             type="text" 
             id="empName" 
             name="empName" 
             required 
-            maxlength="50"
-            pattern="[a-zA-Z\s\.,\-]{1,50}"
+            maxlength="45"
+            placeholder="Enter your name"
+            pattern="[A-Za-z\s\.,\-]{1,45}"
             title="Name must be 1-50 characters, letters, spaces, or basic punctuation"
           >
-          <small class="error-message"></small>
+          <small class="error-message" id="empNameError"></small>
         </div>
         <div class="form-group">
-          <label for="leaveType">Leave Type</label>
-          <select id="leaveType" required>
-            <option value="">Select option</option>
-            <option>Annual Leave</option>
-            <option>Sick Leave</option>
-            <option>Casual Leave</option>
+          <label for="leaveType">Leave Type:</label>
+          <select id="leaveType" name="leaveType" required>
+            <option value="">Select leave type</option>
+            <option value="Annual Leave">Annual Leave</option>
+            <option value="Sick Leave">Sick Leave</option>
+            <option value="Casual Leave">Casual Leave</option>
           </select>
+          <small class="error-message" id="leaveTypeError"></small>
         </div>
         <div class="form-group">
-          <label for="startDate">Start Date</label>
+          <label for="startDate">Start Date:</label>
           <input 
             type="date" 
             id="startDate" 
+            name="startDate"
             required
-            pattern="\d{4}-\d{2}-\d{2}"
-            title="Please enter a date in YYYY-MM-DD format"
           >
+          <small class="error-message" id="startDateError"></small>
         </div>
         <div class="form-group">
-          <label for="endDate">End Date</label>
+          <label for="endDate">End Date:</label>
           <input 
             type="date" 
             id="endDate" 
+            name="endDate"
             required
-            pattern="\d{4}-\d{2}-\d{2}"
-            title="Please enter a date in YYYY-MM-DD format"
           >
+          <small class="error-message" id="endDateError"></small>
         </div>
         <div class="form-group">
-          <label for="reason">Reason</label>
+          <label for="reason">Reason:</label>
           <textarea 
             id="reason" 
+            name="reason"
             rows="4" 
             required
             maxlength="500"
+            placeholder="Enter reason for leave"
             title="Reason must be 3-100 words"
-            oninput="validateReason(this)"
           ></textarea>
           <small id="reasonCounter">Words: 0/100</small>
-          <small class="error-message" id="reasonError" style="display: none;"></small>
+          <small class="error-message" id="reasonError"></small>
         </div>
         <div class="form-actions">
           <button type="submit" class="submit-btn">Submit Request</button>
@@ -977,14 +934,14 @@
         </div>
       </div>
       <div class="button-container">
-        <button class="calendar-btn">View Calendar</button>
+        <button id="calendarBtn" class="calendar-btn">View Calendar</button>
       </div>
       <div class="leave-history">
         <h2>Leave History</h2>
         <div class="history-cards" id="leaveHistoryCards"></div>
       </div>
     </section>
-  </section>
+  </div>
 
   <section class="calendar-container container">
     <div class="calendar-main">
@@ -992,8 +949,8 @@
         <div class="calendar-header">
           <h2 id="calendarTitle"></h2>
           <div class="calendar-nav">
-            <button id="prevMonth">Previous</button>
-            <button id="nextMonth">Next</button>
+            <button id="prevMonthBtn">Previous Month</button>
+            <button id="nextMonthBtn">Next Month</button>
             <button id="applyBtn" class="apply-btn">Back</button>
           </div>
         </div>
@@ -1007,62 +964,174 @@
   </section>
 
   <script>
+    // Utility functions
     function countWords(text) {
       const words = text.trim() ? text.trim().split(/\s+/) : [];
       return words.filter(word => word.length > 0).length;
     }
 
-    function validateReason(textarea) {
-      const reasonText = textarea.value;
-      const wordCount = countWords(reasonText);
-      const reasonCounter = document.getElementById("reasonCounter");
-      const reasonError = document.getElementById("reasonError");
-
-      const hasSpecialChars = /[^a-zA-Z0-9 ,.!?]/.test(reasonText);
-      const hasMultipleSpaces = / {2,}/.test(reasonText);
-
-      reasonCounter.textContent = `Words: ${wordCount}/100`;
-
-      if (hasSpecialChars) {
-        reasonError.textContent = "Only letters, numbers, and basic punctuation allowed";
-        reasonError.style.display = "block";
-        textarea.setCustomValidity("Invalid characters");
-        return false;
-      } else if (hasMultipleSpaces) {
-        reasonError.textContent = "Multiple consecutive spaces not allowed";
-        reasonError.style.display = "block";
-        textarea.setCustomValidity("Multiple spaces");
-        return false;
-      } else if (wordCount > 100) {
-        reasonError.textContent = "Reason cannot exceed 100 words";
-        reasonError.style.display = "block";
-        textarea.setCustomValidity("Too long");
-        return false;
-      } else if (wordCount < 3 && reasonText.trim().length > 0) {
-        reasonError.textContent = "Reason must be at least 3 words";
-        reasonError.style.display = "block";
-        textarea.setCustomValidity("Too short");
-        return false;
-      } else if (reasonText.trim().length === 0) {
-        reasonError.textContent = "Reason cannot be empty";
-        reasonError.style.display = "block";
-        textarea.setCustomValidity("Required");
-        return false;
-      } else {
-        reasonError.style.display = "none";
-        textarea.setCustomValidity("");
-        return true;
-      }
-    }
-
     function isWithinSixMonths(date) {
-
       const today = new Date();
       const sixMonthsFromNow = new Date();
       sixMonthsFromNow.setMonth(today.getMonth() + 6);
       return date <= sixMonthsFromNow;
     }
 
+    function isValidDateFormat(dateString) {
+      const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+      if (!datePattern.test(dateString)) return false;
+      const date = new Date(dateString);
+      return !isNaN(date.getTime());
+    }
+
+    // Validation functions
+    function validateEmpId(empId, errorElement) {
+      if (!errorElement) return false;
+      if (!empId) {
+        errorElement.textContent = "Employee ID is required.";
+        errorElement.style.display = "block";
+        return false;
+      }
+      if (!/^ATS0(?!000)\d{3}$/.test(empId)) {
+        errorElement.textContent = "Emp-ID must be ATS0 followed by 3 digits (001-999).";
+        errorElement.style.display = "block";
+        return false;
+      }
+      errorElement.style.display = "none";
+      return true;
+    }
+
+    function validateEmpName(empName, errorElement) {
+      if (!errorElement) return false;
+      if (!empName) {
+        errorElement.textContent = "Employee name is required.";
+        errorElement.style.display = "block";
+        return false;
+      }
+      if (!/^[A-Za-z\s.,-]{1,45}$/.test(empName)) {
+        errorElement.textContent = "Name must be 1-50 characters, letters, spaces, or basic punctuation.";
+        errorElement.style.display = "block";
+        return false;
+      }
+      errorElement.style.display = "none";
+      return true;
+    }
+
+    function validateLeaveType(leaveType, errorElement) {
+      if (!errorElement) return false;
+      if (!leaveType) {
+        errorElement.textContent = "Please select a leave type.";
+        errorElement.style.display = "block";
+        return false;
+      }
+      errorElement.style.display = "none";
+      return true;
+    }
+
+    function validateStartDate(startDateStr, errorElement) {
+      if (!errorElement) return false;
+      if (!startDateStr) {
+        errorElement.textContent = "Start date is required.";
+        errorElement.style.display = "block";
+        return false;
+      }
+      if (!isValidDateFormat(startDateStr)) {
+        errorElement.textContent = "Invalid start date format. Use YYYY-MM-DD.";
+        errorElement.style.display = "block";
+        return false;
+      }
+      const startDate = new Date(startDateStr);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (startDate < today) {
+        errorElement.textContent = "Start date cannot be in the past.";
+        errorElement.style.display = "block";
+        return false;
+      }
+      if (!isWithinSixMonths(startDate)) {
+        errorElement.textContent = "Start date cannot be more than 6 months in the future.";
+        errorElement.style.display = "block";
+        return false;
+      }
+      errorElement.style.display = "none";
+      return true;
+    }
+
+    function validateEndDate(endDateStr, startDateStr, errorElement) {
+      if (!errorElement) return false;
+      if (!endDateStr) {
+        errorElement.textContent = "End date is required.";
+        errorElement.style.display = "block";
+        return false;
+      }
+      if (!isValidDateFormat(endDateStr)) {
+        errorElement.textContent = "Invalid end date format. Use YYYY-MM-DD.";
+        errorElement.style.display = "block";
+        return false;
+      }
+      const endDate = new Date(endDateStr);
+      const startDate = startDateStr ? new Date(startDateStr) : null;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (!isWithinSixMonths(endDate)) {
+        errorElement.textContent = "End date cannot be more than 6 months in the future.";
+        errorElement.style.display = "block";
+        return false;
+      }
+      if (startDate && endDate < startDate) {
+        errorElement.textContent = "End date cannot be earlier than start date.";
+        errorElement.style.display = "block";
+        return false;
+      }
+      errorElement.style.display = "none";
+      return true;
+    }
+
+    function validateReason(textarea, errorElement) {
+      if (!errorElement || !textarea) return false;
+      const reasonText = textarea.value;
+      const wordCount = countWords(reasonText);
+      const hasSpecialChars = /[^a-zA-Z0-9 ,.!?]/.test(reasonText);
+      const hasMultipleSpaces = /\s{2,}/.test(reasonText);
+
+      document.getElementById("reasonCounter").textContent = `Words: ${wordCount}/100`;
+
+      if (!reasonText.trim()) {
+        errorElement.textContent = "Reason is required.";
+        errorElement.style.display = "block";
+        textarea.setCustomValidity("Required");
+        return false;
+      }
+      if (hasSpecialChars) {
+        errorElement.textContent = "Only letters, numbers, and basic punctuation allowed.";
+        errorElement.style.display = "block";
+        textarea.setCustomValidity("Invalid characters");
+        return false;
+      }
+      if (hasMultipleSpaces) {
+        errorElement.textContent = "Multiple consecutive spaces not allowed.";
+        errorElement.style.display = "block";
+        textarea.setCustomValidity("Multiple spaces");
+        return false;
+      }
+      if (wordCount > 100) {
+        errorElement.textContent = "Reason cannot exceed 100 words.";
+        errorElement.style.display = "block";
+        textarea.setCustomValidity("Too long");
+        return false;
+      }
+      if (wordCount < 3) {
+        errorElement.textContent = "Reason must be at least 3 words.";
+        errorElement.style.display = "block";
+        textarea.setCustomValidity("Too short");
+        return false;
+      }
+      errorElement.style.display = "none";
+      textarea.setCustomValidity("");
+      return true;
+    }
+
+    // API functions
     async function fetchLeaveBalances(empId) {
       try {
         const response = await fetch(`http://51.20.8.44:3059/api/leave-balances/${empId}`, {
@@ -1073,10 +1142,21 @@
           const errorData = await response.json();
           throw new Error(errorData.message || 'Failed to fetch leave balances');
         }
-        return await response.json();
+        const data = await response.json();
+        return {
+          emp_name: data.emp_name || document.getElementById("empName")?.value.trim() || 'N/A',
+          annual: data.annual,
+          sick: data.sick,
+          casual: data.casual
+        };
       } catch (error) {
         console.error('Error fetching leave balances:', error.message);
-        throw error;
+        return {
+          emp_name: document.getElementById("empName")?.value.trim() || 'N/A',
+          annual: 10,
+          sick: 5,
+          casual: 8
+        };
       }
     }
 
@@ -1115,55 +1195,51 @@
       }
     }
 
-    // Format date for display (e.g., "June 10, 2025")
+    // Date formatting functions
     function formatDateDisplay(dateStr) {
       const date = new Date(dateStr);
       return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     }
 
-    // Format date for submission (e.g., "2025-06-10")
     function formatDateForSubmission(date) {
       return date.toISOString().split("T")[0];
     }
 
+    // Load leave details
     async function loadLeaveDetails(empId) {
-      fetchLeaveHistory(empId).then(leaveRequests => {
-        const leaveDetailsContent = document.getElementById("leaveDetailsContent");
-        leaveDetailsContent.innerHTML = "";
+      const leaveDetailsContent = document.getElementById("leaveDetailsContent");
+      if (!leaveDetailsContent) return;
 
-        if (leaveRequests.length === 0) {
-          const noRequests = document.createElement("p");
-          noRequests.classList.add("no-requests");
-          noRequests.textContent = "No leave requests found";
-          leaveDetailsContent.appendChild(noRequests);
-          return;
-        }
+      leaveDetailsContent.innerHTML = "";
 
-        fetchLeaveBalances(empId).then(balance => {
-          const empName = balance.emp_name || 'N/A';
-          leaveRequests.forEach(request => {
-            const leaveItem = document.createElement("div");
-            leaveItem.classList.add("leave-item");
-            leaveItem.innerHTML = `
-              <p><strong>Emp-Id:</strong> ${request.emp_id}</p>
-              <p><strong>Name:</strong> ${empName}</p>
-              <p><strong>Type:</strong> ${request.leave_type}</p>
-              <p><strong>Start:</strong> ${formatDateDisplay(request.start_date)}</p>
-              <p><strong>End:</strong> ${formatDateDisplay(request.end_date)}</p>
-              <p><strong>Reason:</strong> ${request.reason}</p>
-              <p><strong>Status:</strong> ${request.status}</p>
-            `;
-            leaveDetailsContent.appendChild(leaveItem);
-          });
-        }).catch(error => {
-          const noRequests = document.createElement("p");
-          noRequests.classList.add("no-requests");
-          noRequests.textContent = "Unable to fetch employee name for leave details.";
-          leaveDetailsContent.appendChild(noRequests);
-        });
+      const leaveRequests = await fetchLeaveHistory(empId);
+      if (leaveRequests.length === 0) {
+        leaveDetailsContent.innerHTML = '<p class="no-requests">No leave requests found.</p>';
+        return;
+      }
+
+      const balance = await fetchLeaveBalances(empId).catch(() => ({
+        emp_name: 'N/A'
+      }));
+      const empName = balance.emp_name || 'N/A';
+
+      leaveRequests.forEach(request => {
+        const leaveItem = document.createElement("div");
+        leaveItem.classList.add("leave-item");
+        leaveItem.innerHTML = `
+          <p><strong>Emp-ID:</strong> ${request.emp_id}</p>
+          <p><strong>Name:</strong> ${empName}</p>
+          <p><strong>Type:</strong> ${request.leave_type}</p>
+          <p><strong>Start:</strong> ${formatDateDisplay(request.start_date)}</p>
+          <p><strong>End:</strong> ${formatDateDisplay(request.end_date)}</p>
+          <p><strong>Reason:</strong> ${request.reason}</p>
+          <p><strong>Status:</strong> <span class="status-badge status-${request.status.toLowerCase()}">${request.status}</span></p>
+        `;
+        leaveDetailsContent.appendChild(leaveItem);
       });
     }
 
+    // Load employee data
     async function loadEmployeeData(empId) {
       const employeeDataSection = document.getElementById("employeeDataSection");
       const employeeName = document.getElementById("employeeName");
@@ -1174,365 +1250,295 @@
       const errorMessageElement = document.getElementById("error-message");
       const mainContainer = document.querySelector('.main-container');
 
-      fetchLeaveBalances(empId).then(balances => {
+      if (!employeeDataSection || !employeeName || !annualLeaveBalance || !sickLeaveBalance || !casualLeaveBalance || !leaveHistoryCards || !mainContainer) {
+        console.error('One or more DOM elements not found.');
+        return;
+      }
+
+      try {
+        const balances = await fetchLeaveBalances(empId);
         employeeName.textContent = balances.emp_name || 'N/A';
         annualLeaveBalance.textContent = balances.annual;
         sickLeaveBalance.textContent = balances.sick;
         casualLeaveBalance.textContent = balances.casual;
         
-        // Show employee data section and adjust layout
         employeeDataSection.style.display = "block";
         mainContainer.classList.add('has-employee-data');
-        
-        if (errorMessageElement) {
-          errorMessageElement.style.display = "none";
-        }
-      }).catch(error => {
-        console.error('Error fetching balances:', error.message);
-        if (error.message === 'Employee not found') {
-          if (errorMessageElement) {
-            errorMessageElement.textContent = "Employee not found. Please submit a leave request to register.";
-            errorMessageElement.style.display = "block";
-          }
-        } else {
-          if (errorMessageElement) {
-            errorMessageElement.textContent = error.message || "Failed to fetch leave balances.";
-            errorMessageElement.style.display = "block";
-          }
-        }
-        employeeDataSection.style.display = "none";
-        mainContainer.classList.remove('has-employee-data');
-      });
+        if (errorMessageElement) errorMessageElement.style.display = "none";
 
-      fetchLeaveHistory(empId).then(leaveRequests => {
+        const leaveRequests = await fetchLeaveHistory(empId);
         leaveHistoryCards.innerHTML = "";
 
         if (leaveRequests.length === 0) {
-          const noHistory = document.createElement("p");
-          noHistory.classList.add("no-history");
-          noHistory.textContent = "No leave history found";
-          leaveHistoryCards.appendChild(noHistory);
+          leaveHistoryCards.innerHTML = '<p class="no-history">No leave history found.</p>';
           return;
         }
 
-        fetchLeaveBalances(empId).then(balances => {
-          const empName = balances.emp_name || 'N/A';
-          leaveRequests.forEach(request => {
-            const card = document.createElement("div");
-            card.classList.add("history-card");
-            card.innerHTML = `
-              <p><strong>Emp-ID:</strong> ${request.emp_id}</p>
-              <p><strong>Name:</strong> ${empName}</p>
-              <p><strong>Type:</strong> ${request.leave_type}</p>
-              <p><strong>Start:</strong> ${formatDateDisplay(request.start_date)}</p>
-              <p><strong>End:</strong> ${formatDateDisplay(request.end_date)}</p>
-              <p><strong>Status:</strong> ${request.status}</p>
-              <p><strong>Reason:</strong> ${request.reason}</p>
-            `;
-            leaveHistoryCards.appendChild(card);
-          });
-        }).catch(error => {
-          const noHistory = document.createElement("p");
-          noHistory.classList.add("no-history");
-          noHistory.textContent = "Unable to fetch employee name for history.";
-          leaveHistoryCards.appendChild(noHistory);
+        const empName = balances.emp_name || 'N/A';
+        leaveRequests.forEach(request => {
+          const card = document.createElement("div");
+          card.classList.add("history-card");
+          card.innerHTML = `
+            <p><strong>Emp-ID:</strong> ${request.emp_id}</p>
+            <p><strong>Name:</strong> ${empName}</p>
+            <p><strong>Type:</strong> ${request.leave_type}</p>
+            <p><strong>Start:</strong> ${formatDateDisplay(request.start_date)}</p>
+            <p><strong>End:</strong> ${formatDateDisplay(request.end_date)}</p>
+            <p><strong>Status:</strong> <span class="status-badge status-${request.status.toLowerCase()}">${request.status}</span></p>
+            <p><strong>Reason:</strong> ${request.reason}</p>
+          `;
+          leaveHistoryCards.appendChild(card);
         });
-      }).catch(error => {
-        console.error('Error fetching history:', error);
+      } catch (error) {
         if (errorMessageElement) {
-          errorMessageElement.textContent = error.message || "Failed to fetch leave history.";
+          errorMessageElement.textContent = error.message === 'Employee not found' 
+            ? "Employee not found. Please submit a leave request to register."
+            : error.message || "Failed to fetch employee data.";
           errorMessageElement.style.display = "block";
         }
-      });
+        employeeDataSection.style.display = "none";
+        mainContainer.classList.remove('has-employee-data');
+      }
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
-      const leaveRequestSection = document.querySelector(".leave-request");
-      const employeeDataSection = document.querySelector(".employee-data");
-      const calendarSection = document.querySelector(".calendar-container");
-      const calendarBtn = document.querySelector(".calendar-btn");
-      const applyBtn = document.getElementById("applyBtn");
-      const closeBtn = document.querySelector(".close-btn");
+    // Calendar generation
+    async function generateCalendar(month, year, empId) {
       const calendarGrid = document.getElementById("calendarGrid");
       const calendarTitle = document.getElementById("calendarTitle");
-      const prevMonthBtn = document.getElementById("prevMonth");
-      const nextMonthBtn = document.getElementById("nextMonth");
+      if (!calendarGrid || !calendarTitle) return;
+
+      calendarGrid.innerHTML = "";
+      calendarTitle.textContent = `${new Date(year, month).toLocaleString("default", { month: "long" })} ${year}`;
+
+      const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      daysOfWeek.forEach(day => {
+        const dayName = document.createElement("div");
+        dayName.classList.add("day-name");
+        dayName.textContent = day;
+        calendarGrid.appendChild(dayName);
+      });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const prevMonthDays = new Date(year, month, 0).getDate();
+
+      const leaveRequests = await fetchLeaveHistory(empId);
+      const approvedLeaves = leaveRequests.filter(req => req.status === "Approved");
+
+      for (let i = 0; i < firstDay; i++) {
+        const emptyDay = document.createElement("div");
+        emptyDay.classList.add("day", "other-month");
+        emptyDay.textContent = prevMonthDays - firstDay + i + 1;
+        calendarGrid.appendChild(emptyDay);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayDiv = document.createElement("div");
+        dayDiv.classList.add("day");
+        dayDiv.textContent = day;
+
+        const today = new Date();
+        if (
+          day === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear()
+        ) {
+          dayDiv.classList.add("today");
+        }
+
+        const currentDateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        const leavesOnDay = approvedLeaves.filter(leave => {
+          return currentDateStr >= leave.start_date && currentDateStr <= leave.end_date;
+        });
+
+        if (leavesOnDay.length > 0) {
+          dayDiv.classList.add("leave-day");
+          try {
+            const balance = await fetchLeaveBalances(empId);
+            const empName = balance.emp_name || 'N/A';
+            leavesOnDay.forEach(leave => {
+              const leaveInfo = document.createElement("div");
+              leaveInfo.classList.add("leave-info");
+              leaveInfo.innerHTML = `
+                <strong>${leave.leave_type}</strong><br>
+                Emp-ID: ${leave.emp_id}<br>
+                Name: ${empName}<br>
+                Reason: ${leave.reason}
+              `;
+              dayDiv.appendChild(leaveInfo);
+            });
+          } catch {
+            leavesOnDay.forEach(leave => {
+              const leaveInfo = document.createElement("div");
+              leaveInfo.classList.add("leave-info");
+              leaveInfo.innerHTML = `
+                <strong>${leave.leave_type}</strong><br>
+                Emp-ID: ${leave.emp_id}<br>
+                Name: N/A<br>
+                Reason: ${leave.reason}
+              `;
+              dayDiv.appendChild(leaveInfo);
+            });
+          }
+        }
+
+        calendarGrid.appendChild(dayDiv);
+      }
+
+      const lastDay = new Date(year, month + 1, 0).getDay();
+      for (let i = 1; i <= 6 - lastDay; i++) {
+        const emptyDay = document.createElement("div");
+        emptyDay.classList.add("day", "other-month");
+        emptyDay.textContent = i;
+        calendarGrid.appendChild(emptyDay);
+      }
+    }
+
+    // Main event listener
+    document.addEventListener("DOMContentLoaded", function () {
+      const leaveRequestSection = document.querySelector(".leave-request");
+      const employeeDataSection = document.getElementById("employeeDataSection");
+      const calendarSection = document.querySelector(".calendar-container");
+      const calendarBtn = document.getElementById("calendarBtn");
+      const applyBtn = document.getElementById("applyBtn");
+      const prevMonthBtn = document.getElementById("prevMonthBtn");
+      const nextMonthBtn = document.getElementById("nextMonthBtn");
+
       const empIdInput = document.getElementById("Empid");
-      const mainContainer = document.querySelector('.main-container');
+      const empNameInput = document.getElementById("empName");
+      const leaveTypeInput = document.getElementById("leaveType");
+      const startDateInput = document.getElementById("startDate");
+      const endDateInput = document.getElementById("endDate");
+      const reasonInput = document.getElementById("reason");
+
+      const empIdError = document.getElementById("empIdError");
+      const empNameError = document.getElementById("empNameError");
+      const leaveTypeError = document.getElementById("leaveTypeError");
+      const startDateError = document.getElementById("startDateError");
+      const endDateError = document.getElementById("endDateError");
+      const reasonError = document.getElementById("reasonError");
+
+      if (!leaveRequestSection || !employeeDataSection || !calendarSection || !calendarBtn || !applyBtn || !prevMonthBtn || !nextMonthBtn || !empIdInput || !empNameInput || !leaveTypeInput || !startDateInput || !endDateInput || !reasonInput) {
+        console.error('One or more critical DOM elements not found.');
+        return;
+      }
 
       let currentDate = new Date();
       let currentMonth = currentDate.getMonth();
       let currentYear = currentDate.getFullYear();
       let empId = null;
 
+      // Initialize visibility
       leaveRequestSection.style.display = "block";
       employeeDataSection.style.display = "none";
       calendarSection.style.display = "none";
 
-      empIdInput.addEventListener("blur", async function () {
-        const empIdValue = empIdInput.value.trim();
-        if (/^ATS0(?!000)\d{3}$/.test(empIdValue)) {
-          try {
-            empId = empIdValue;
-            loadEmployeeData(empId);
-            loadLeaveDetails(empId);
-          } catch (error) {
-            console.error('Error fetching data for emp_id:', error);
-            const errorMessageElement = document.getElementById("error-message");
-            if (errorMessageElement) {
-              errorMessageElement.textContent = error.message || "Failed to fetch data.";
-              errorMessageElement.style.display = "block";
-            }
-          }
+      // Input event listeners for real-time validation
+      empIdInput.addEventListener("input", () => validateEmpId(empIdInput.value.trim(), empIdError));
+      empIdInput.addEventListener("blur", async () => {
+        const valid = validateEmpId(empIdInput.value.trim(), empIdError);
+        if (valid) {
+          empId = empIdInput.value.trim();
+          await loadEmployeeData(empId);
+          await loadLeaveDetails(empId);
         }
       });
 
-      calendarBtn.addEventListener("click", function () {
+      empNameInput.addEventListener("input", () => validateEmpName(empNameInput.value.trim(), empNameError));
+      empNameInput.addEventListener("blur", () => validateEmpName(empNameInput.value.trim(), empNameError));
+
+      leaveTypeInput.addEventListener("change", () => validateLeaveType(leaveTypeInput.value, leaveTypeError));
+      leaveTypeInput.addEventListener("blur", () => validateLeaveType(leaveTypeInput.value, leaveTypeError));
+
+      startDateInput.addEventListener("input", () => validateStartDate(startDateInput.value, startDateError));
+      startDateInput.addEventListener("blur", () => validateStartDate(startDateInput.value, startDateError));
+
+      endDateInput.addEventListener("input", () => validateEndDate(endDateInput.value, startDateInput.value, endDateError));
+      endDateInput.addEventListener("blur", () => validateEndDate(endDateInput.value, startDateInput.value, endDateError));
+
+      reasonInput.addEventListener("input", () => validateReason(reasonInput, reasonError));
+      reasonInput.addEventListener("blur", () => validateReason(reasonInput, reasonError));
+
+      // Navigation button listeners
+      calendarBtn.addEventListener("click", async () => {
         if (!empId) {
-          alert("Please enter an Emp-ID first.");
+          if (empIdError) {
+            empIdError.textContent = "Please enter a valid Employee ID.";
+            empIdError.style.display = "block";
+          }
           return;
         }
-        calendarSection.style.display = "block";
+        calendarSection.style.display = "flex";
         leaveRequestSection.style.display = "none";
         employeeDataSection.style.display = "none";
-        generateCalendar(currentMonth, currentYear, empId);
-        loadLeaveDetails(empId);
+        await generateCalendar(currentMonth, currentYear, empId);
+        await loadLeaveDetails(empId);
       });
 
-      applyBtn.addEventListener("click", function () {
+      applyBtn.addEventListener("click", () => {
         leaveRequestSection.style.display = "block";
         employeeDataSection.style.display = empId ? "block" : "none";
         calendarSection.style.display = "none";
       });
 
-      closeBtn.addEventListener("click", function () {
-        leaveRequestSection.style.display = "block";
-        employeeDataSection.style.display = empId ? "block" : "none";
-        calendarSection.style.display = "none";
-        if (empId) loadLeaveDetails(empId);
-      });
-
-      function isValidDateFormat(dateString) {
-        const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-        if (!datePattern.test(dateString)) return false;
-        const date = new Date(dateString);
-        return !isNaN(date.getTime());
-      }
-
-      function generateCalendar(month, year, empId) {
-        calendarGrid.innerHTML = "";
-        calendarTitle.textContent = `${new Date(year, month).toLocaleString("default", { month: "long" })} ${year}`;
-
-        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        daysOfWeek.forEach((day) => {
-          const dayName = document.createElement("div");
-          dayName.classList.add("day-name");
-          dayName.textContent = day;
-          calendarGrid.appendChild(dayName);
-        });
-
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const prevMonthDays = new Date(year, month, 0).getDate();
-
-        fetchLeaveHistory(empId).then(leaveRequests => {
-          const approvedLeaves = leaveRequests.filter((req) => req.status === "Pending");
-
-          for (let i = 0; i < firstDay; i++) {
-            const emptyDay = document.createElement("div");
-            emptyDay.classList.add("day", "other-month");
-            emptyDay.textContent = prevMonthDays - firstDay + i + 1;
-            calendarGrid.appendChild(emptyDay);
-          }
-
-          for (let day = 1; day <= daysInMonth; day++) {
-            const dayDiv = document.createElement("div");
-            dayDiv.classList.add("day");
-            dayDiv.textContent = day;
-
-            const today = new Date();
-            if (
-              day === today.getDate() &&
-              month === today.getMonth() &&
-              year === today.getFullYear()
-            ) {
-              dayDiv.classList.add("today");
-            }
-
-            const currentDateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-            const leavesOnDay = approvedLeaves.filter((leave) => {
-              return currentDateStr >= leave.start_date && currentDateStr <= leave.end_date;
-            });
-
-            if (leavesOnDay.length > 0) {
-              dayDiv.classList.add("leave-day");
-              fetchLeaveBalances(empId).then(balance => {
-                const empName = balance.emp_name || 'N/A';
-                leavesOnDay.forEach((leave) => {
-                  const leaveInfo = document.createElement("div");
-                  leaveInfo.classList.add("leave-info");
-                  leaveInfo.innerHTML = `
-                    <strong>${leave.leave_type}</strong><br>
-                    Emp-ID: ${leave.emp_id}<br>
-                    Name: ${empName}<br>
-                    Reason: ${leave.reason}
-                  `;
-                  dayDiv.appendChild(leaveInfo);
-                });
-              }).catch(error => {
-                leavesOnDay.forEach((leave) => {
-                  const leaveInfo = document.createElement("div");
-                  leaveInfo.classList.add("leave-info");
-                  leaveInfo.innerHTML = `
-                    <strong>${leave.leave_type}</strong><br>
-                    Emp-ID: ${leave.emp_id}<br>
-                    Name: N/A<br>
-                    Reason: ${leave.reason}
-                  `;
-                  dayDiv.appendChild(leaveInfo);
-                });
-              });
-            }
-
-            calendarGrid.appendChild(dayDiv);
-          }
-
-          const lastDay = new Date(year, month + 1, 0).getDay();
-          for (let i = 1; i <= 6 - lastDay; i++) {
-            const emptyDay = document.createElement("div");
-            emptyDay.classList.add("day", "other-month");
-            emptyDay.textContent = i;
-            calendarGrid.appendChild(emptyDay);
-          }
-        });
-      }
-
-      prevMonthBtn.addEventListener("click", () => {
+      prevMonthBtn.addEventListener("click", async () => {
         currentMonth--;
         if (currentMonth < 0) {
           currentMonth = 11;
           currentYear--;
         }
-        generateCalendar(currentMonth, currentYear, empId);
+        await generateCalendar(currentMonth, currentYear, empId);
       });
 
-      nextMonthBtn.addEventListener("click", () => {
+      nextMonthBtn.addEventListener("click", async () => {
         currentMonth++;
         if (currentMonth > 11) {
           currentMonth = 0;
           currentYear++;
         }
-        generateCalendar(currentMonth, currentYear, empId);
+        await generateCalendar(currentMonth, currentYear, empId);
       });
 
+      // Form submission
       document.getElementById("leaveRequestForm").addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const leaveType = document.getElementById("leaveType").value;
-        const empIdInput = document.getElementById("Empid").value.trim();
-        const empNameInput = document.getElementById("empName").value.trim();
-        const startDateInput = document.getElementById("startDate");
-        const endDateInput = document.getElementById("endDate");
+        const empIdValid = validateEmpId(empIdInput.value.trim(), empIdError);
+        const empNameValid = validateEmpName(empNameInput.value.trim(), empNameError);
+        const leaveTypeValid = validateLeaveType(leaveTypeInput.value, leaveTypeError);
+        const startDateValid = validateStartDate(startDateInput.value, startDateError);
+        const endDateValid = validateEndDate(endDateInput.value, startDateInput.value, endDateError);
+        const reasonValid = validateReason(reasonInput, reasonError);
+
         const errorMessageElement = document.getElementById("error-message");
-        const reasonTextarea = document.getElementById("reason");
-        const reason = reasonTextarea.value;
 
-        if (!/^ATS0(?!000)\d{3}$/.test(empIdInput)) {
+        if (!empIdValid || !empNameValid || !leaveTypeValid || !startDateValid || !endDateValid || !reasonValid) {
           if (errorMessageElement) {
-            errorMessageElement.textContent = "Emp-ID must be 1-7 alphanumeric characters.";
-            errorMessageElement.style.display = "block";
-          }
-          return;
-        }
-
-        if (!/^[a-zA-Z\s.,-]{1,50}$/.test(empNameInput)) {
-          if (errorMessageElement) {
-            errorMessageElement.textContent = "Name must be 1-50 characters, letters, spaces, or basic punctuation.";
-            errorMessageElement.style.display = "block";
-          }
-          return;
-        }
-
-        if (!validateReason(reasonTextarea)) {
-          return;
-        }
-
-        if (!leaveType) {
-          if (errorMessageElement) {
-            errorMessageElement.textContent = "Please select a leave type.";
-            errorMessageElement.style.display = "block";
-          }
-          return;
-        }
-
-        if (!isValidDateFormat(startDateInput.value)) {
-          if (errorMessageElement) {
-            errorMessageElement.textContent = "Invalid start date format. Use YYYY-MM-DD.";
-            errorMessageElement.style.display = "block";
-          }
-          return;
-        }
-
-        if (!isValidDateFormat(endDateInput.value)) {
-          if (errorMessageElement) {
-            errorMessageElement.textContent = "Invalid end date format. Use YYYY-MM-DD.";
-            errorMessageElement.style.display = "block";
-          }
-          return;
-        }
-
-        const startDate = new Date(startDateInput.value);
-        const endDate = new Date(endDateInput.value);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        if (errorMessageElement) {
-          errorMessageElement.style.display = "none";
-        }
-
-        if (startDate < today) {
-          if (errorMessageElement) {
-            errorMessageElement.textContent = "Start date cannot be in the past.";
-            errorMessageElement.style.display = "block";
-          }
-          return;
-        }
-
-        if (!isWithinSixMonths(startDate) || !isWithinSixMonths(endDate)) {
-          if (errorMessageElement) {
-            errorMessageElement.textContent = "Leave dates cannot be more than 6 months in the future.";
-            errorMessageElement.style.display = "block";
-          }
-          return;
-        }
-
-        if (endDate < startDate) {
-          if (errorMessageElement) {
-            errorMessageElement.textContent = "End date cannot be earlier than start date.";
+            errorMessageElement.textContent = "Please correct the errors in the form.";
             errorMessageElement.style.display = "block";
           }
           return;
         }
 
         try {
-          empId = empIdInput;
-
+          empId = empIdInput.value.trim();
           const leaveRequest = {
             Empid: empId,
-            emp_name: empNameInput,
-            leaveType,
-            startDate: formatDateForSubmission(startDate),
-            endDate: formatDateForSubmission(endDate),
-            reason,
+            emp_name: empNameInput.value.trim(),
+            leaveType: leaveTypeInput.value,
+            startDate: formatDateForSubmission(new Date(startDateInput.value)),
+            endDate: formatDateForSubmission(new Date(endDateInput.value)),
+            reason: reasonInput.value,
             submittedDate: formatDateForSubmission(new Date())
           };
 
           await submitLeaveRequest(leaveRequest);
-          loadEmployeeData(empId);
-          loadLeaveDetails(empId);
+          await loadEmployeeData(empId);
+          await loadLeaveDetails(empId);
           document.getElementById("leaveRequestForm").reset();
           document.getElementById("reasonCounter").textContent = "Words: 0/100";
-          alert("Leave Request submitted successfully!");
+          if (errorMessageElement) errorMessageElement.style.display = "none";
+          alert("Leave request submitted successfully!");
         } catch (error) {
           if (errorMessageElement) {
             errorMessageElement.textContent = error.message || "Failed to submit leave request.";
